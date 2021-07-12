@@ -1,0 +1,35 @@
+# Set the shell default to windows command-line
+SHELL = cmd
+	
+# Set the development environment folders
+SRC_F = source
+HEADER_F = header
+BUILD_F = build
+
+# Build variables
+CC = gcc
+CFLAGS = -I.\${HEADER_F} -c
+DEP_FLAGS = -MMD -MF ${@:%.o=%.d}
+
+# Specify the target name
+TARGET = ${BUILD_F}\application.exe
+
+# Find all source files
+SRCS = ${wildcard */*.c}
+
+# Create object files from source files 
+OBJCS = ${SRCS:${SRC_F}/%.c=${BUILD_F}\\%.o}
+
+all: ${TARGET}
+
+${TARGET}: ${OBJCS}
+	${CC} $^ -o $@
+	
+${BUILD_F}\\%.o:${SRC_F}\%.c
+	${CC} ${CFLAGS} $< -o $@ ${DEP_FLAGS}
+	
+clean:
+	del ${BUILD_F}\*
+	
+-include ${BUILD_F}/*.d
+
